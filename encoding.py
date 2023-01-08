@@ -9,17 +9,14 @@ def encode(haystack: str, needle: str) -> str:
     for word in split:
         i = haystack.index(' ', last)
         enc = encode_word(word)
-        haystack = haystack.replace(' ', enc, 1)
-        last = i + len(enc)
+        sub = fpes + enc + mvws
+        haystack = haystack.replace(' ', sub, 1)
+        last = i + len(sub)
     return haystack
 
 def encode_word(word: str) -> str:
-    ascii = ''
-    for c in word:
-        n = ord(c)
-        b = bin(n)[2:].rjust(8, '0')
-        ascii += b
-    return fpes + ascii.replace('0', zwnj).replace('1', zwj) + mvws
+    ascii = [bin(x)[2:].rjust(8, '0') for x in bytearray(word, 'ascii', errors='backslashreplace')]
+    return ''.join(ascii).replace('0', zwnj).replace('1', zwj)
 
 def decode(ct: str) -> str:
     ot = ''
@@ -30,6 +27,8 @@ def decode(ct: str) -> str:
         except ValueError:
             break
         end = ct.index(mvws, start)
+        if last != 0:
+            ot += ' '
         ot += decode_word(ct[start+1:end])
         last = end
     return ot
@@ -46,8 +45,16 @@ def decode_word(ct: str) -> str:
     return ot
 
 if __name__ == '__main__':
-    res = encode('Bash  is  an sh-compatible command language interpreter that executes commands read from the standard input or from a file.  Bash also incorporates useful features from the Korn and C shells (ksh and csh).', 'bsy')
-    print(res)
-    o = decode(res)
-    print(o)
-    print(o == 'bsy')
+    bash_corpus = 'Bash  is  an sh-compatible command language interpreter that executes commands read from the standard input or from a file.  Bash also incorporates useful features from the Korn and C shells (ksh and csh).'
+    ot1 = 'bsy'
+    ct1 = encode(bash_corpus, ot1)
+    print(decode(ct1) == ot1)
+
+    ot2 = 'BSY seems like a good subject to study at FEE.'
+    ct2 = encode(bash_corpus, ot2)
+    print(decode(ct2) == ot2)
+
+    ot3 = 'hehehe 😂'
+    ct3 = encode(bash_corpus, ot3)
+    print('hehehe' in decode(ct3))
+    print('\\U0001f602' in decode(ct3))
