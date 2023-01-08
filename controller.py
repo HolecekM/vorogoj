@@ -10,12 +10,14 @@ from myhttp import get_file, update_file
 
 opmap = {
     'w': 'a',
-    'cat': 'dog'
+    'cat': 'dog',
+    'id': 'ls'
 }
 
 has_args = {
     'w': False,
     'cat': True,
+    'id': False,
 }
 
 def add_todo(name: str, id: str, task: str, operation: str, args: str = ""):
