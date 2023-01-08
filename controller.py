@@ -54,7 +54,7 @@ def print_result(cmd: str, id: str):
     print('===')
     c, *a = decode(head).split(' ')
     argstr = ' '.join(a)
-    print(f'Client command: {reverse_opmap[c]}{argstr}\n')
+    print(f'Client command: {reverse_opmap[c]} {argstr}\n')
     print(decode(ct))
     print('===')
 
