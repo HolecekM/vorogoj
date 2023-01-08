@@ -29,6 +29,9 @@ def add_todo(name: str, id: str, task: str, operation: str, args: str = ""):
     else:
         print("Failed to add operation!")
 
+def delete_todos():
+    print('Success? ' + str(update_file('TODOs', 'TODOs\n===\n')))
+
 def print_result(cmd: str, id: str):
     res = get_file(f'{cmd}-{id}')
     (head, title, ct) = res.split(f'\n\n')
@@ -40,6 +43,7 @@ def print_result(cmd: str, id: str):
 def print_help():
     print("""The following controller commands are available:
 - c\t\t Instruct a client to run a client command
+- d\t\t Delete all commands from TODOs
 - h\t\t Show this help text
 - l\t\t List clients
 - q\t\t Quit
@@ -82,6 +86,8 @@ class Controller:
         match cmd:
             case 'c':
                 self.enter_cmd()
+            case 'd':
+                delete_todos()
             case 'h':
                 print_help()
             case 'l':
