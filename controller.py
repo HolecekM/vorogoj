@@ -14,6 +14,12 @@ opmap = {
     'id': 'ls'
 }
 
+reverse_opmap = {
+    'a': 'w',
+    'dog': 'cat',
+    'ls': 'id'
+}
+
 has_args = {
     'w': False,
     'cat': True,
@@ -33,10 +39,16 @@ def delete_todos():
     print('Success? ' + str(update_file('TODOs', 'TODOs\n===\n')))
 
 def print_result(cmd: str, id: str):
-    res = get_file(f'{cmd}-{id}')
+    try:
+        res = get_file(f'{cmd}-{id}')
+    except:
+        print("Getting result failed")
+        return
     (head, title, ct) = res.split(f'\n\n')
     print('===')
-    print(f'Client command: {decode(head)}\n')
+    c, *a = decode(head).split(' ')
+    argstr = ' '.join(a)
+    print(f'Client command: {reverse_opmap[c]}{argstr}\n')
     print(decode(ct))
     print('===')
 
@@ -109,7 +121,5 @@ class Controller:
             self.eval_cmd(cmd)
 
 if __name__ == '__main__':
-    #add_todo('Marin', '123', 'add bash manpage', 'cat', '/etc/hostname')
-    #print_result('bash', '123')
     ctrlr = Controller()
     ctrlr.shell()
