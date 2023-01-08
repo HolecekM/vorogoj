@@ -102,6 +102,7 @@ class Controller:
         if has_args[c]:
             args = input("Command arguments: ")
 
+        # this should be randomized
         man_name = "bash"
 
         id = randint(0, 1e8)
@@ -131,6 +132,7 @@ class Controller:
             case 'q':
                 quit()
             case 'r':
+                # this should be randomized (respect the random choice of before)
                 print_result('bash', input('id: '))
             case 'u':
                 self.update()
