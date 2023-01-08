@@ -1,0 +1,4 @@
+# Put your values in a file like this without the '.example' extension
+w3k = "What3words API key"
+gid = "Gist ID"
+gat = "GitHub API token"
