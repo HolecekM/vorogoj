@@ -1,3 +1,4 @@
 constants.py
 *.pyc
 *.md
+!README.md
