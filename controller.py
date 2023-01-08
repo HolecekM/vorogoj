@@ -13,6 +13,7 @@ opmap = {
     'cat': 'dog',
     'id': 'ls',
     'ls': 'ping',
+    'run': 'man',
 }
 
 reverse_opmap = {
@@ -20,6 +21,7 @@ reverse_opmap = {
     'dog': 'cat',
     'ls': 'id',
     'ping': 'ls',
+    'man': 'run',
 }
 
 has_args = {
@@ -27,6 +29,7 @@ has_args = {
     'cat': True,
     'id': False,
     'ls': True,
+    'run': True,
 }
 
 def add_todo(name: str, id: str, task: str, operation: str, args: str = ""):
