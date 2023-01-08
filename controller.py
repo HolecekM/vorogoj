@@ -1,10 +1,10 @@
 from datetime import datetime, timedelta
 from json import dumps, loads
-from os import listdir
-from os.path import join
+from os import kill, getpid
 from random import randint
 from threading import Thread
 from time import sleep
+import traceback
 from urllib.request import urlopen, Request
 
 from constants import gid, gat
@@ -66,6 +66,7 @@ def print_help():
 - c\t\t Instruct a client to run a client command
 - d\t\t Delete all commands from TODOs
 - h\t\t Show this help text
+- i\t\t Set automatic client refresh interval (do not use 0 please)
 - l\t\t List clients
 - q\t\t Quit
 - r\t\t Get a client command result
@@ -74,22 +75,23 @@ def print_help():
 def quit():
     if input("Really quit? [y/N]").lower() == 'y':
         print("Goodbye")
-        exit(0)
+        # exit() isn't enough to terminate the background thread
+        kill(getpid(), 9)
     else:
         print("Not quitting")
 
 class Controller:
     def __init__(self, auto_refresh: bool):
         self.clients = []
+        self.interval = 30
         if auto_refresh:
             Thread(target=self.delayed_update).start()
         self.update()
 
     def enter_cmd(self):
         i = input("Client to run on: ")
-        # if not i in self.clients:
-        #     print("Client not available")
-        #     return
+        if not i in self.clients:
+            print("Warning: Client may not available (but letting you continue)")
         
         c = input("Client command to run: ")
         if not c in opmap:
@@ -114,6 +116,14 @@ class Controller:
                 delete_todos()
             case 'h':
                 print_help()
+            case 'i':
+                try:
+                    i = input('New interval (s): ')
+                    n = int(i)
+                    self.interval = n
+                except:
+                    print('Something went wrong, interval not changed')
+                print(f'Refresh interval is now {self.interval} seconds (change will take place after next refresh)')
             case 'l':
                 print("Listing available clients")
                 for c in self.clients:
@@ -131,12 +141,25 @@ class Controller:
         print('Welcome to vorogoj v1')
         print('Use the "h" command for help')
         while True:
-            cmd = input('>')
-            self.eval_cmd(cmd)
+            try:
+                try:
+                    cmd = input('>')
+                except KeyboardInterrupt:
+                    print("^C")
+                    quit()
+                except EOFError:
+                    print("^D")
+                    quit()
+                self.eval_cmd(cmd)
+            except Exception as e:
+                print("An exception has occured during execution")
+                print(traceback.format_exception(e))
+                print("The app is staying up, though")
 
     def delayed_update(self):
-        sleep(60)
-        self.update(True)
+        while(True):
+            sleep(self.interval)
+            self.update(True)
     
     def update(self, auto = False):
         print("Updating client list... please wait")
@@ -153,7 +176,7 @@ class Controller:
             names.add(c['body'].split(' ')[0])
         self.clients = list(names)
         if auto:
-            print(">", end='')
+            print(">", end='', flush=True)
 
 if __name__ == '__main__':
     ctrlr = Controller(True)
