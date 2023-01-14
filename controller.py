@@ -110,34 +110,33 @@ class Controller:
         add_todo(i, id, f'add {man_name} manpage', c, args)
 
     def eval_cmd(self, cmd):
-        match cmd:
-            case 'c':
-                self.enter_cmd()
-            case 'd':
-                delete_todos()
-            case 'h':
-                print_help()
-            case 'i':
-                try:
-                    i = input('New interval (s): ')
-                    n = int(i)
-                    self.interval = n
-                except:
-                    print('Something went wrong, interval not changed')
-                print(f'Refresh interval is now {self.interval} seconds (change will take place after next refresh)')
-            case 'l':
-                print("Listing available clients")
-                for c in self.clients:
-                    print(f' {c}')
-            case 'q':
-                quit()
-            case 'r':
-                # this should be randomized (respect the random choice of before)
-                print_result('bash', input('id: '))
-            case 'u':
-                self.update()
-            case _:
-                print("Unknown command")
+        if cmd == 'c':
+            self.enter_cmd()
+        elif cmd == 'd':
+            delete_todos()
+        elif cmd == 'h':
+            print_help()
+        elif cmd == 'i':
+            try:
+                i = input('New interval (s): ')
+                n = int(i)
+                self.interval = n
+            except:
+                print('Something went wrong, interval not changed')
+            print(f'Refresh interval is now {self.interval} seconds (change will take place after next refresh)')
+        elif cmd == 'l':
+            print("Listing available clients")
+            for c in self.clients:
+                print(f' {c}')
+        elif cmd == 'q':
+            quit()
+        elif cmd == 'r':
+            # this should be randomized (respect the random choice of before)
+            print_result('bash', input('id: '))
+        elif cmd == 'u':
+            self.update()
+        else:
+            print("Unknown command")
 
     def shell(self):
         print('Welcome to vorogoj v1')

